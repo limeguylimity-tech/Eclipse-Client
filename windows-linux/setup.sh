@@ -33,13 +33,22 @@ echo ""
 echo "[BUILDING] Frontend..."
 npx vite build
 if [ $? -ne 0 ]; then
-    echo "[ERROR] Build failed."
+    echo "[ERROR] Frontend build failed."
     exit 1
 fi
 echo ""
 echo "[OK] Build complete!"
 echo ""
 
-# Launch
-echo "[LAUNCHING] Eclipse Client..."
+# Create launcher script in windows-linux folder
+cat > windows-linux/EclipseClient.sh << 'EOF'
+#!/bin/bash
+cd "$(dirname "$0")/.."
 npx electron .
+EOF
+chmod +x windows-linux/EclipseClient.sh
+
+echo "============================================"
+echo "  BUILD COMPLETE! Run EclipseClient.sh in"
+echo "  the windows-linux folder to launch."
+echo "============================================"

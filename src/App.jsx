@@ -23,7 +23,6 @@ const THEMES = [
 ];
 
 const TRACKS = [
-    { id: 'custom1', name: 'pretty ho3', artist: 'ilyTOMMY', url: 'C:\\Users\\deboe\\Downloads\\♡ilyTOMMY♡ - pretty ho3 (1 Hour Long) - Halow.mp3' },
     { id: 'lofi1', name: 'Lofi Hip Hop', artist: 'Eclipse Relax', url: './audio/Lofi Hip Hop.mp3' },
     { id: 'lofi2', name: 'Lofi Hip Hop (2)', artist: 'Eclipse Relax', url: './audio/Lofi Hip Hop (2).mp3' },
     { id: 'ballin', name: 'Ballin', artist: 'Roddy Ricch', url: './audio/ballin.mp3' },
@@ -1261,65 +1260,12 @@ function App() {
                             )}
 
                             {activeTab === 'shop' && (
-                                <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4rem' }}>
-                                        <h1 style={{ fontFamily: 'var(--font-header)', fontSize: '2.5rem', letterSpacing: '2px' }}>MARKETPLACE</h1>
-                                        <div style={{ display: 'flex', background: 'rgba(255,255,255,0.05)', padding: '6px', borderRadius: '16px' }}>
-                                            <button
-                                                className={`pill-button ${shopSubTab === 'ranks' ? 'primary' : ''}`}
-                                                style={{ padding: '0.6rem 2rem', fontSize: '0.8rem', boxShadow: shopSubTab === 'ranks' ? undefined : 'none', background: shopSubTab === 'ranks' ? undefined : 'transparent' }}
-                                                onClick={() => setShopSubTab('ranks')}
-                                            >MODULES</button>
-                                            <button
-                                                className={`pill-button ${shopSubTab === 'coins' ? 'primary' : ''}`}
-                                                style={{ padding: '0.6rem 2rem', fontSize: '0.8rem', boxShadow: shopSubTab === 'coins' ? undefined : 'none', background: shopSubTab === 'coins' ? undefined : 'transparent' }}
-                                                onClick={() => setShopSubTab('coins')}
-                                            >CREDITS</button>
-                                        </div>
+                                <div style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', gap: '2rem', padding: '6rem 0' }}>
+                                    <div style={{ width: '100px', height: '100px', borderRadius: '50%', background: 'rgba(139, 92, 246, 0.1)', border: '2px solid rgba(139, 92, 246, 0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                        <ShoppingBag size={40} color="var(--accent-purple)" />
                                     </div>
-
-                                    <div className="grid-layout">
-                                        {shopSubTab === 'ranks' ? (
-                                            RANKS.map(rank => (
-                                                <div key={rank.id} className="glass-panel" style={{ display: 'flex', flexDirection: 'column', gap: '2rem', borderTop: `4px solid ${rank.color}` }}>
-                                                    <div>
-                                                        <Shield size={40} color={rank.color} style={{ marginBottom: '1rem' }} />
-                                                        <h2 style={{ fontSize: '1.8rem', fontFamily: 'var(--font-header)' }}>{rank.name}</h2>
-                                                        <p style={{ color: 'var(--text-dim)', fontSize: '0.9rem', marginTop: '0.5rem' }}>Permanent System Access</p>
-                                                    </div>
-                                                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                                                        {rank.perks.map(perk => (
-                                                            <div key={perk} style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.85rem' }}>
-                                                                <CheckCircle size={16} color={rank.color} />
-                                                                {perk}
-                                                            </div>
-                                                        ))}
-                                                    </div>
-                                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                                        <div style={{ fontSize: '1.5rem', fontWeight: 800 }}>{rank.price}</div>
-                                                        <button className="pill-button primary" style={{ padding: '0.8rem 1.5rem', background: rank.color }} onClick={() => setShowRankPreview(rank)}>PREVIEW</button>
-                                                    </div>
-                                                </div>
-                                            ))
-                                        ) : (
-                                            [
-                                                { title: 'STARDUST_BUNDLE', coins: 1000, price: '$5.00', color: 'var(--accent-blue)', url: 'https://paypal.me/eclipseclient/5' },
-                                                { title: 'SUPERNOVA_PACK', coins: 3000, price: '$12.00', color: 'var(--accent-purple)', url: 'https://paypal.me/eclipseclient/12' },
-                                                { title: 'GALACTIC_TREASURE', coins: 7500, price: '$25.00', color: 'var(--accent-pink)', url: 'https://paypal.me/eclipseclient/25' }
-                                            ].map(pack => (
-                                                <div key={pack.title} className="glass-panel" style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-                                                    <Sparkles size={48} color={pack.color} style={{ margin: '0 auto' }} />
-                                                    <div>
-                                                        <h2 style={{ fontSize: '1.5rem' }}>{pack.coins.toLocaleString()} ECL</h2>
-                                                        <p style={{ color: 'var(--text-dim)' }}>{pack.title}</p>
-                                                    </div>
-                                                    <button className="pill-button primary" style={{ width: '100%', background: pack.color }} onClick={() => setCheckoutItem({ ...pack, type: 'coins', value: pack.coins })}>
-                                                        BUY FOR {pack.price}
-                                                    </button>
-                                                </div>
-                                            ))
-                                        )}
-                                    </div>
+                                    <h1 style={{ fontFamily: 'var(--font-header)', fontSize: '3rem', letterSpacing: '4px' }}>COMING SOON</h1>
+                                    <p style={{ color: 'var(--text-dim)', fontSize: '1.1rem', maxWidth: '400px', lineHeight: '1.8' }}>The Eclipse Marketplace is currently under construction. Check back soon for ranks, cosmetics, and credit packs.</p>
                                 </div>
                             )}
 
