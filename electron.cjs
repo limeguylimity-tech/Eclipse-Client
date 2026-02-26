@@ -61,10 +61,13 @@ if (!gotTheLock) {
             },
         });
 
-        if (isDev) {
+        const distPath = path.join(__dirname, 'dist', 'index.html');
+        if (fs.existsSync(distPath)) {
+            win.loadFile(distPath);
+        } else if (isDev) {
             win.loadURL('http://localhost:5173').catch(e => console.error('Failed to load URL:', e));
         } else {
-            win.loadFile(path.join(__dirname, 'dist', 'index.html'));
+            win.loadFile(distPath);
         }
 
         ipcMain.on('window-control', (event, action) => {
