@@ -484,17 +484,6 @@ function App() {
     const [localMods, setLocalMods] = useState([]);
     const [loaderVersions, setLoaderVersions] = useState([]);
     const [newProfileLoaderVer, setNewProfileLoaderVer] = useState('');
-    const [serverRunning, setServerRunning] = useState(false);
-    const [serverConsole, setServerConsole] = useState([]);
-    const [serverVersion, setServerVersion] = useState('1.21.1');
-    const [serverProperties, setServerProperties] = useState({
-        'server-port': '25565',
-        'gamemode': 'survival',
-        'difficulty': 'normal',
-        'max-players': '10',
-        'motd': 'Eclipse Server',
-        'online-mode': 'true'
-    });
     const [updateAvailable, setUpdateAvailable] = useState(false);
     const [latestVersion, setLatestVersion] = useState('');
     const [showUpdateModal, setShowUpdateModal] = useState(false);
@@ -562,15 +551,9 @@ function App() {
                 });
             });
 
-            if (window.electron.onServerLog) {
-                window.electron.onServerLog((line) => {
-                    setServerConsole(prev => [...prev, line].slice(-500));
-                });
-            }
-
             try {
-                const currentVersion = '1.0.0';
-                const res = await axios.get('https://raw.githubusercontent.com/eclipse-client/launcher/main/version.json', { timeout: 5000 }).catch(() => null);
+                const currentVersion = '1.0.1';
+                const res = await axios.get(`https://raw.githubusercontent.com/limeguylimity-tech/Eclipse-Client/main/version.json?t=${Date.now()}`, { timeout: 5000 }).catch(() => null);
                 if (res?.data?.latest && res.data.latest !== currentVersion) {
                     setLatestVersion(res.data.latest);
                     setUpdateAvailable(true);
@@ -782,7 +765,6 @@ function App() {
                         { id: 'search', icon: Search, title: 'Modules' },
                         { id: 'shop', icon: ShoppingBag, title: 'Market' },
                         { id: 'profiles', icon: Box, title: 'Stations' },
-                        { id: 'servers', icon: HardDrive, title: 'Servers' },
                         { id: 'logs', icon: Terminal, title: 'Console' },
                         { id: 'events', icon: Calendar, title: 'Events' },
                         { id: 'wallpapers', icon: Monitor, title: 'Visuals' },
@@ -1358,138 +1340,6 @@ function App() {
                                                 <button className="pill-button secondary" style={{ borderColor: event.color, color: event.color }}>JOIN SECTOR</button>
                                             </div>
                                         ))}
-                                    </div>
-                                </div>
-                            )}
-
-                            {activeTab === 'servers' && (
-                                <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
-                                    <h1 style={{ marginBottom: '3rem', fontFamily: 'var(--font-header)', fontSize: '2.5rem' }}>SERVER_HOSTING</h1>
-
-                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', marginBottom: '2rem' }}>
-                                        <div className="glass-panel" style={{ padding: '2rem' }}>
-                                            <h2 style={{ fontSize: '1.1rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                                <Gamepad size={18} color="var(--accent-blue)" />
-                                                Server Version
-                                            </h2>
-                                            <div className="glass-panel" style={{ padding: '0.5rem' }}>
-                                                <select
-                                                    style={{ width: '100%', background: 'transparent', border: 'none', color: 'white', padding: '0.8rem', outline: 'none', cursor: 'pointer' }}
-                                                    value={serverVersion}
-                                                    onChange={(e) => setServerVersion(e.target.value)}
-                                                >
-                                                    {versions.filter(v => v.type === 'release').slice(0, 20).map(v => (
-                                                        <option key={v.id} value={v.id} style={{ background: '#111' }}>{v.id}</option>
-                                                    ))}
-                                                </select>
-                                            </div>
-                                            <p style={{ color: 'var(--text-dim)', fontSize: '0.75rem', marginTop: '1rem' }}>Server runs locally on your computer. While the launcher is open and the server is running, other players can connect to your IP.</p>
-                                        </div>
-
-                                        <div className="glass-panel" style={{ padding: '2rem', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: '1rem' }}>
-                                            <div style={{
-                                                width: '60px', height: '60px', borderRadius: '50%',
-                                                background: serverRunning ? 'rgba(16, 185, 129, 0.2)' : 'rgba(255, 77, 77, 0.1)',
-                                                border: `2px solid ${serverRunning ? '#10b981' : 'rgba(255,77,77,0.3)'}`,
-                                                display: 'flex', alignItems: 'center', justifyContent: 'center'
-                                            }}>
-                                                <div style={{
-                                                    width: '20px', height: '20px', borderRadius: '50%',
-                                                    background: serverRunning ? '#10b981' : '#ff4d4d',
-                                                    boxShadow: serverRunning ? '0 0 15px #10b981' : 'none'
-                                                }} />
-                                            </div>
-                                            <span style={{ fontWeight: 800, fontSize: '0.85rem', color: serverRunning ? '#10b981' : 'var(--text-dim)' }}>
-                                                {serverRunning ? 'ONLINE' : 'OFFLINE'}
-                                            </span>
-                                            <button
-                                                className={`pill-button ${serverRunning ? 'secondary' : 'primary'}`}
-                                                style={{
-                                                    width: '100%',
-                                                    background: serverRunning ? undefined : 'linear-gradient(135deg, #10b981, #3b82f6)',
-                                                    color: serverRunning ? '#ff4d4d' : undefined,
-                                                    borderColor: serverRunning ? 'rgba(255,77,77,0.3)' : undefined
-                                                }}
-                                                onClick={async () => {
-                                                    if (serverRunning) {
-                                                        await window.electron.stopServer();
-                                                        setServerRunning(false);
-                                                        setServerConsole(prev => [...prev, '> Server stopped.']);
-                                                    } else {
-                                                        setServerConsole(['> Starting server...']);
-                                                        const res = await window.electron.startServer({ version: serverVersion, mcPath: mcPath || '', properties: serverProperties });
-                                                        if (res.success) {
-                                                            setServerRunning(true);
-                                                            setServerConsole(prev => [...prev, '> Server started on port ' + (serverProperties['server-port'] || '25565')]);
-                                                        } else {
-                                                            setServerConsole(prev => [...prev, '> ERROR: ' + res.error]);
-                                                        }
-                                                    }
-                                                }}
-                                            >
-                                                {serverRunning ? 'SHUTDOWN' : 'IGNITE SERVER'}
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    <div className="glass-panel" style={{ padding: '2rem', marginBottom: '2rem' }}>
-                                        <h2 style={{ fontSize: '1.1rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                            <Settings size={18} color="var(--accent-purple)" />
-                                            Server Properties
-                                        </h2>
-                                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                                            {Object.entries(serverProperties).map(([key, val]) => (
-                                                <div key={key}>
-                                                    <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, color: 'var(--accent-blue)', marginBottom: '0.5rem', letterSpacing: '1px' }}>{key.toUpperCase().replace(/-/g, '_')}</label>
-                                                    {key === 'gamemode' ? (
-                                                        <div style={{ display: 'flex', gap: '0.5rem' }}>
-                                                            {['survival', 'creative', 'adventure', 'spectator'].map(m => (
-                                                                <button
-                                                                    key={m}
-                                                                    className={`pill-button ${val === m ? 'primary' : 'secondary'}`}
-                                                                    style={{ fontSize: '0.65rem', padding: '0.4rem 0.8rem', flex: 1 }}
-                                                                    onClick={() => setServerProperties(p => ({ ...p, [key]: m }))}
-                                                                >{m.toUpperCase()}</button>
-                                                            ))}
-                                                        </div>
-                                                    ) : key === 'difficulty' ? (
-                                                        <div style={{ display: 'flex', gap: '0.5rem' }}>
-                                                            {['peaceful', 'easy', 'normal', 'hard'].map(d => (
-                                                                <button
-                                                                    key={d}
-                                                                    className={`pill-button ${val === d ? 'primary' : 'secondary'}`}
-                                                                    style={{ fontSize: '0.65rem', padding: '0.4rem 0.8rem', flex: 1 }}
-                                                                    onClick={() => setServerProperties(p => ({ ...p, [key]: d }))}
-                                                                >{d.toUpperCase()}</button>
-                                                            ))}
-                                                        </div>
-                                                    ) : (
-                                                        <input
-                                                            style={{ width: '100%', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.05)', color: 'white', padding: '0.6rem 1rem', borderRadius: '10px', outline: 'none' }}
-                                                            value={val}
-                                                            onChange={(e) => setServerProperties(p => ({ ...p, [key]: e.target.value }))}
-                                                        />
-                                                    )}
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div>
-
-                                    <div className="glass-panel" style={{ padding: '1.5rem' }}>
-                                        <h2 style={{ fontSize: '1rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                            <Terminal size={16} color="var(--accent-green)" />
-                                            Server Console
-                                        </h2>
-                                        <div style={{
-                                            background: 'rgba(0,0,0,0.4)', borderRadius: '10px', padding: '1rem',
-                                            maxHeight: '250px', overflowY: 'auto', fontFamily: 'monospace', fontSize: '0.75rem', color: '#10b981'
-                                        }}>
-                                            {serverConsole.length === 0 ? (
-                                                <span style={{ color: 'var(--text-dim)' }}>// Server output will appear here</span>
-                                            ) : serverConsole.map((line, i) => (
-                                                <div key={i}>{line}</div>
-                                            ))}
-                                        </div>
                                     </div>
                                 </div>
                             )}

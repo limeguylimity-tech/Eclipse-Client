@@ -522,85 +522,9 @@ if (!gotTheLock) {
     }
 
 
-    // ── Server Hosting ──
-    let serverProcess = null;
-
-    ipcMain.handle('start-server', async (event, options) => {
-        const { version, mcPath, properties } = options;
-        const root = mcPath || getDefaultMcRoot();
-        const serverDir = path.join(root, 'eclipse-server');
-        const serverJar = path.join(serverDir, `server-${version}.jar`);
-        const propsFile = path.join(serverDir, 'server.properties');
-        const eulaFile = path.join(serverDir, 'eula.txt');
-
-        if (!fs.existsSync(serverDir)) fs.mkdirSync(serverDir, { recursive: true });
-
-        // Download server jar if not present
-        if (!fs.existsSync(serverJar)) {
-            try {
-                const axios = require('axios');
-                mainWindow.webContents.send('server-log', `Downloading server ${version}...`);
-                const versionManifest = await axios.get('https://launchermeta.mojang.com/mc/game/version_manifest_v2.json');
-                const vData = versionManifest.data.versions.find(v => v.id === version);
-                if (!vData) return { success: false, error: `Version ${version} not found` };
-
-                const vMeta = await axios.get(vData.url);
-                const serverUrl = vMeta.data.downloads?.server?.url;
-                if (!serverUrl) return { success: false, error: `No server download for ${version}` };
-
-                const response = await axios.get(serverUrl, { responseType: 'arraybuffer' });
-                fs.writeFileSync(serverJar, Buffer.from(response.data));
-                mainWindow.webContents.send('server-log', `Server ${version} downloaded.`);
-            } catch (e) {
-                return { success: false, error: 'Failed to download server: ' + e.message };
-            }
-        }
-
-        // Write server.properties
-        const propsContent = Object.entries(properties || {}).map(([k, v]) => `${k}=${v}`).join('\n');
-        fs.writeFileSync(propsFile, propsContent);
-        fs.writeFileSync(eulaFile, 'eula=true\n');
-
-        // Spawn server
-        try {
-            const { spawn } = require('child_process');
-            serverProcess = spawn('java', ['-Xmx2G', '-Xms1G', '-jar', serverJar, 'nogui'], {
-                cwd: serverDir,
-                stdio: ['pipe', 'pipe', 'pipe']
-            });
-
-            serverProcess.stdout.on('data', (data) => {
-                mainWindow.webContents.send('server-log', data.toString().trim());
-            });
-            serverProcess.stderr.on('data', (data) => {
-                mainWindow.webContents.send('server-log', '[ERR] ' + data.toString().trim());
-            });
-            serverProcess.on('close', (code) => {
-                mainWindow.webContents.send('server-log', `Server stopped (exit code: ${code})`);
-                serverProcess = null;
-            });
-
-            return { success: true };
-        } catch (e) {
-            return { success: false, error: 'Failed to start server: ' + e.message };
-        }
-    });
-
-    ipcMain.handle('stop-server', async () => {
-        if (serverProcess) {
-            serverProcess.stdin.write('stop\n');
-            setTimeout(() => {
-                if (serverProcess) { serverProcess.kill(); serverProcess = null; }
-            }, 5000);
-        }
-        return { success: true };
-    });
-
-
     app.whenReady().then(createWindow);
 
     app.on('window-all-closed', () => {
-        if (serverProcess) { serverProcess.kill(); serverProcess = null; }
         if (process.platform !== 'darwin') app.quit();
     });
 }

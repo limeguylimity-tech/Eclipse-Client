@@ -36,10 +36,5 @@ contextBridge.exposeInMainWorld('electron', {
     installVersion: (params) => ipcRenderer.invoke('install-version', params),
 
     // Console log listener
-    onMcLog: (callback) => ipcRenderer.on('mc-log', (event, data) => callback(data)),
-
-    // Server hosting
-    startServer: (params) => ipcRenderer.invoke('start-server', params),
-    stopServer: () => ipcRenderer.invoke('stop-server'),
-    onServerLog: (callback) => ipcRenderer.on('server-log', (event, data) => callback(data))
+    onMcLog: (callback) => ipcRenderer.on('mc-log', (event, data) => callback(data))
 });
