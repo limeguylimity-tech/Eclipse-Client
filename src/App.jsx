@@ -1749,7 +1749,7 @@ function App() {
                         <button
                             className="pill-button primary"
                             style={{ width: '100%', height: '50px', fontSize: '1rem', background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)', marginBottom: '1rem' }}
-                            onClick={() => window.electron.openExternal('https://github.com/eclipse-client/launcher/releases/latest')}
+                            onClick={() => window.electron.openExternal('https://github.com/limeguylimity-tech/Eclipse-Client/archive/refs/heads/main.zip')}
                         >
                             <Download size={18} style={{ marginRight: '10px' }} />
                             UPDATE LAUNCHER
