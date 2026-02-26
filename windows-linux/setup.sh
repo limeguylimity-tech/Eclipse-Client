@@ -29,18 +29,7 @@ echo ""
 echo "[OK] Dependencies installed!"
 echo ""
 
-# Build frontend
-echo "[BUILDING] Frontend..."
-npx vite build
-if [ $? -ne 0 ]; then
-    echo "[ERROR] Frontend build failed."
-    exit 1
-fi
-echo ""
-echo "[OK] Build complete!"
-echo ""
-
-# Create launcher script in windows-linux folder
+# Create launcher script
 cat > windows-linux/EclipseClient.sh << 'EOF'
 #!/bin/bash
 cd "$(dirname "$0")/.."
@@ -49,6 +38,7 @@ EOF
 chmod +x windows-linux/EclipseClient.sh
 
 echo "============================================"
-echo "  BUILD COMPLETE! Run EclipseClient.sh in"
-echo "  the windows-linux folder to launch."
+echo "  SETUP COMPLETE! Run EclipseClient.sh in"
+echo "  the windows-linux folder to launch"
+echo "  Eclipse Client."
 echo "============================================"

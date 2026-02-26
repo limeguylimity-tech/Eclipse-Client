@@ -34,17 +34,7 @@ echo.
 echo [OK] Dependencies installed!
 echo.
 
-:: Build frontend
-echo [BUILDING] Frontend...
-call npx vite build
-if %errorlevel% neq 0 (
-    echo [ERROR] Frontend build failed.
-    pause
-    exit /b 1
-)
-echo.
-
-:: Build Windows exe
+:: Build Windows exe (frontend is already prebuilt)
 echo [BUILDING] Windows executable...
 call npx electron-builder --win portable
 if %errorlevel% neq 0 (
@@ -53,18 +43,9 @@ if %errorlevel% neq 0 (
     exit /b 1
 )
 echo.
-
-:: Move exe to windows-linux folder
-echo [MOVING] Executable to windows-linux folder...
-for %%f in (dist\*.exe) do (
-    copy "%%f" "windows-linux\%%~nxf" >nul
-    echo Copied: %%~nxf
-)
-
-echo.
 echo ============================================
 echo   BUILD COMPLETE! Your .exe is in the
-echo   windows-linux folder. Double-click it
-echo   to launch Eclipse Client.
+echo   dist folder. Double-click it to launch
+echo   Eclipse Client.
 echo ============================================
 pause
