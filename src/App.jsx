@@ -483,9 +483,6 @@ function App() {
     const [localMods, setLocalMods] = useState([]);
     const [loaderVersions, setLoaderVersions] = useState([]);
     const [newProfileLoaderVer, setNewProfileLoaderVer] = useState('');
-    const [updateAvailable, setUpdateAvailable] = useState(false);
-    const [latestVersion, setLatestVersion] = useState('');
-    const [showUpdateModal, setShowUpdateModal] = useState(false);
 
     const [profiles, setProfiles] = useState([
         { name: 'Voyager Stable', version: '1.21.1', active: true },
@@ -549,16 +546,6 @@ function App() {
                     return newLogs.slice(-1000);
                 });
             });
-
-            try {
-                const currentVersion = '1.0.1';
-                const res = await axios.get(`https://raw.githubusercontent.com/limeguylimity-tech/Eclipse-Client/main/version.json?t=${Date.now()}`, { timeout: 5000 }).catch(() => null);
-                if (res?.data?.latest && res.data.latest !== currentVersion) {
-                    setLatestVersion(res.data.latest);
-                    setUpdateAvailable(true);
-                    setShowUpdateModal(true);
-                }
-            } catch (e) { console.log('[UPDATE] Version check skipped'); }
 
             setIsReady(true);
         };
@@ -1667,49 +1654,6 @@ function App() {
                 </main>
             )
             }
-            {showUpdateModal && (
-                <div className="modal-overlay" style={{ zIndex: 2000 }}>
-                    <motion.div
-                        initial={{ scale: 0.9, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        className="glass-panel"
-                        style={{ width: '450px', padding: '3rem', textAlign: 'center' }}
-                    >
-                        <div style={{ width: '70px', height: '70px', borderRadius: '50%', background: 'rgba(59, 130, 246, 0.15)', border: '2px solid var(--accent-blue)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}>
-                            <Download size={30} color="var(--accent-blue)" />
-                        </div>
-                        <h2 style={{ fontSize: '1.8rem', fontFamily: 'var(--font-header)', marginBottom: '1rem' }}>UPDATE AVAILABLE</h2>
-                        <p style={{ color: 'var(--text-dim)', marginBottom: '0.5rem', fontSize: '0.9rem' }}>You are running an older version of Eclipse Client.</p>
-                        <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', margin: '1.5rem 0' }}>
-                            <div style={{ background: 'rgba(255,77,77,0.1)', border: '1px solid rgba(255,77,77,0.2)', padding: '0.6rem 1.2rem', borderRadius: '10px' }}>
-                                <span style={{ fontSize: '0.7rem', color: 'var(--text-dim)' }}>CURRENT</span><br />
-                                <span style={{ fontWeight: 800, color: '#ff4d4d' }}>v1.0.0</span>
-                            </div>
-                            <div style={{ display: 'flex', alignItems: 'center' }}><ArrowRight size={20} color="var(--text-dim)" /></div>
-                            <div style={{ background: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.2)', padding: '0.6rem 1.2rem', borderRadius: '10px' }}>
-                                <span style={{ fontSize: '0.7rem', color: 'var(--text-dim)' }}>LATEST</span><br />
-                                <span style={{ fontWeight: 800, color: '#10b981' }}>v{latestVersion}</span>
-                            </div>
-                        </div>
-                        <p style={{ color: 'var(--text-dim)', fontSize: '0.8rem', marginBottom: '2rem' }}>Please update to get the latest features and bug fixes.</p>
-                        <button
-                            className="pill-button primary"
-                            style={{ width: '100%', height: '50px', fontSize: '1rem', background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)', marginBottom: '1rem' }}
-                            onClick={() => window.electron.openExternal('https://github.com/limeguylimity-tech/Eclipse-Client/archive/refs/heads/main.zip')}
-                        >
-                            <Download size={18} style={{ marginRight: '10px' }} />
-                            UPDATE LAUNCHER
-                        </button>
-                        <button
-                            className="pill-button secondary"
-                            style={{ width: '100%', height: '40px', fontSize: '0.8rem' }}
-                            onClick={() => setShowUpdateModal(false)}
-                        >
-                            REMIND ME LATER
-                        </button>
-                    </motion.div>
-                </div>
-            )}
         </div>
     );
 }
